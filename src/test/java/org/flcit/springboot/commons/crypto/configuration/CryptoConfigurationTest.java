@@ -45,7 +45,7 @@ class CryptoConfigurationTest {
             when(SecretKeyFactory.getInstance(anyString())).thenThrow(NoSuchAlgorithmException.class);
             final CryptoConfiguration config = new CryptoConfiguration();
             config.setKeyString("jhsdjfhddddddddddddddddddddddddd");
-            assertThrows(IllegalStateException.class, () -> config.getKey());
+            assertThrows(IllegalStateException.class, config::getKey);
         }
     }
 

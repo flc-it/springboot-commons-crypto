@@ -69,14 +69,14 @@ class CryptoAutoConfigurationTest {
     void commonsCryptoAutoConfigurationBeanKeyOk() {
         ContextRunnerUtils.assertHasSingleBean(
                 this.contextRunner
-                .withInitializer((test) -> test.getEnvironment().getPropertySources().addFirst(new MapPropertySource("dynamicPropertySource", Collections.singletonMap("crypto.key", generate())))),
+                .withInitializer(test -> test.getEnvironment().getPropertySources().addFirst(new MapPropertySource("dynamicPropertySource", Collections.singletonMap("crypto.key", generate())))),
                 CryptoConfiguration.class, CryptoService.class);
     }
 
     @Test
     void cryptDecryptKeyStringOk() {
         this.contextRunner
-        .withInitializer((test) -> test.getEnvironment().getPropertySources().addFirst(new MapPropertySource("dynamicPropertySource", Collections.singletonMap("crypto.key", generate()))))
+        .withInitializer(test -> test.getEnvironment().getPropertySources().addFirst(new MapPropertySource("dynamicPropertySource", Collections.singletonMap("crypto.key", generate()))))
         .run(context -> {
             final CryptoService service = context.getBean(CryptoService.class);
             assertEquals(StringUtils.EMPTY, service.decryptWithValidity(service.encryptToString(VALIDITY)));
@@ -94,7 +94,7 @@ class CryptoAutoConfigurationTest {
     @Test
     void cryptDecryptKo() {
         this.contextRunner
-        .withInitializer((test) -> test.getEnvironment().getPropertySources().addFirst(new MapPropertySource("dynamicPropertySource", Collections.singletonMap("crypto.key", generate()))))
+        .withInitializer(test -> test.getEnvironment().getPropertySources().addFirst(new MapPropertySource("dynamicPropertySource", Collections.singletonMap("crypto.key", generate()))))
         .run(context -> {
             final CryptoService service = context.getBean(CryptoService.class);
             try (MockedStatic<Cipher> mock = mockStatic(Cipher.class)) {
@@ -112,7 +112,7 @@ class CryptoAutoConfigurationTest {
     @Test
     void checkValidityKo() {
         this.contextRunner
-        .withInitializer((test) -> test.getEnvironment().getPropertySources().addFirst(new MapPropertySource("dynamicPropertySource", Collections.singletonMap("crypto.key", generate()))))
+        .withInitializer(test -> test.getEnvironment().getPropertySources().addFirst(new MapPropertySource("dynamicPropertySource", Collections.singletonMap("crypto.key", generate()))))
         .run(context -> {
             final CryptoService service = context.getBean(CryptoService.class);
             assertEquals(StringUtils.EMPTY, service.decryptWithValidity(service.encryptToString(VALIDITY)));

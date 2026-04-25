@@ -7,8 +7,8 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>springboot-commons-crypto</name>
-    <description>Librairie pour crypter des données et générer des urls sécurisées dans un composant Spring Boot</description>
+    <name>${project.artifactId}</name>
+    <description>Librairie pour chiffrer et déchiffrer des données dans un composant Spring Boot</description>
     <url>https://github.com/flc-it/springboot-commons-crypto</url>
 
     <licenses>
@@ -30,8 +30,8 @@
 
     <!-- Paramètres gestionnaire de version -->
     <scm>
-        <connection>scm:git:git://github.com/flc-it/springboot-commons-crypto.git</connection>
-        <developerConnection>scm:git:ssh://github.com/flc-it/springboot-commons-crypto.git</developerConnection>
+        <connection>scm:git:git@github.com:flc-it/springboot-commons-crypto.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/flc-it/springboot-commons-crypto.git</developerConnection>
         <url>https://github.com/flc-it/springboot-commons-crypto</url>
         <tag>HEAD</tag>
     </scm>
@@ -46,22 +46,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring.boot.version>3.5.13</spring.boot.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <spring.boot.version>3.5.14</spring.boot.version>
         <!-- Internal dependencies version -->
-        <org.flcit.springboot.commons.core.version>1.0.0-SNAPSHOT</org.flcit.springboot.commons.core.version>
-        <org.flcit.springboot.commons.test.version>1.0.0-SNAPSHOT</org.flcit.springboot.commons.test.version>
-        <!-- External dependency version -->
-
-        <!-- surefire -->
-        <surefire.outputDir>${project.build.directory}/surefire-reports</surefire.outputDir>
-        <!-- jacoco -->
-        <jacoco.out.ut.file>jacoco.exec</jacoco.out.ut.file>
-        <jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
-        <jacoco.outputDir>${project.build.directory}/jacoco</jacoco.outputDir>
-        <!-- sonar -->
-        <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <org.flcit.springboot.commons.core.version>1.0.0</org.flcit.springboot.commons.core.version>
+        <org.flcit.springboot.commons.test.version>1.0.0</org.flcit.springboot.commons.test.version>
+        <!-- External dependencies version -->
     </properties>
 
     <!-- dependencies management -->
@@ -97,59 +87,12 @@
             <version>${org.flcit.springboot.commons.test.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.sonarsource.java</groupId>
-            <artifactId>sonar-jacoco-listeners</artifactId>
-            <version>5.14.0.18788</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
 
-        <pluginManagement>
-            <plugins>
-                <!-- plugin jacoco: Utilisé pour produire les rapports d'analyse de code 
-                    pour Sonar -->
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.14</version>
-                    <executions>
-                        <execution>
-                            <id>merge-results</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>merge</goal>
-                            </goals>
-                            <configuration>
-                                <fileSets>
-                                    <fileSet>
-                                        <directory>${project.build.directory}/jacoco</directory>
-                                        <includes>
-                                            <include>*.exec</include>
-                                        </includes>
-                                    </fileSet>
-                                </fileSets>
-                                <destFile>${project.build.directory}/jacoco-aggregate/aggregate.exec</destFile>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>post-merge-report</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                            <configuration>
-                                <dataFile>${project.build.directory}/jacoco-aggregate/aggregate.exec</dataFile>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -194,87 +137,95 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+            </plugin>
+
+            <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
                 <version>0.10.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <publishingServerId>central</publishingServerId>
-                    <waitUntil>published</waitUntil>
+                    <autoPublish>true</autoPublish>
                 </configuration>
             </plugin>
 
-            <!-- surefire plugin Utilisé pour lancer les tests unitaires et exclure 
-                les tests d'intégration. Ils seront lancés par le plugin failsafe -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.21.0</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.5</version>
-                <configuration>
-                    <argLine>-Xmx1G ${jacoco.agent.ut.arg}</argLine>
-                    <excludes>
-                        <exclude>**/*IT.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
-            <!-- failsafe plugin: Utilisé pour les tests d'intégration -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.5.5</version>
-                <configuration>
-                    <reportsDirectory>${surefire.outputDir}</reportsDirectory>
-                    <argLine>-Xmx1G ${jacoco.agent.it.arg}</argLine>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>integration-tests</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- plugin jacoco: Utilisé pour produire les rapports d'analyse de code 
-                pour Sonar -->
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.14</version>
                 <executions>
-                    <!-- Prepares a variable, jacoco.agent.ut.arg, that contains the info 
-                        to be passed to the JVM hosting the code being tested. -->
                     <execution>
-                        <id>prepare-ut-agent</id>
-                        <phase>process-test-classes</phase>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
-                        <configuration>
-                            <destFile>${jacoco.outputDir}/${jacoco.out.ut.file}</destFile>
-                            <propertyName>jacoco.agent.ut.arg</propertyName>
-                            <append>true</append>
-                        </configuration>
                     </execution>
-                    <!-- Prepares a variable, jacoco.agent.it.arg, that contains the info 
-                        to be passed to the JVM hosting the code being tested. -->
                     <execution>
-                        <id>prepare-it-agent</id>
-                        <!-- moved to package phase to be sure all pre-integration test have 
-                            it already set to bring up environments with jacoco agent as JVM params -->
-                        <phase>package</phase>
+                        <id>report</id>
                         <goals>
-                            <goal>prepare-agent-integration</goal>
+                            <goal>report</goal>
                         </goals>
                         <configuration>
-                            <destFile>${jacoco.outputDir}/${jacoco.out.it.file}</destFile>
-                            <propertyName>jacoco.agent.it.arg</propertyName>
-                            <append>true</append>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc-no-fork</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>

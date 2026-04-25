@@ -28,19 +28,18 @@ import java.util.Collections;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 
+import org.flcit.commons.core.util.StringUtils;
+import org.flcit.springboot.commons.crypto.configuration.CryptoConfiguration;
+import org.flcit.springboot.commons.crypto.exception.ValidityExpiredException;
+import org.flcit.springboot.commons.crypto.exception.ValidityNotFoundException;
+import org.flcit.springboot.commons.crypto.service.CryptoService;
+import org.flcit.springboot.commons.test.util.ContextRunnerUtils;
+import org.flcit.springboot.commons.test.util.PropertyTestUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.core.env.MapPropertySource;
-
-import org.flcit.springboot.commons.core.exception.BadRequestException;
-import org.flcit.springboot.commons.core.exception.ExpiredException;
-import org.flcit.commons.core.util.StringUtils;
-import org.flcit.springboot.commons.crypto.configuration.CryptoConfiguration;
-import org.flcit.springboot.commons.crypto.service.CryptoService;
-import org.flcit.springboot.commons.test.util.ContextRunnerUtils;
-import org.flcit.springboot.commons.test.util.PropertyTestUtils;
 
 class CryptoAutoConfigurationTest {
 
@@ -83,9 +82,9 @@ class CryptoAutoConfigurationTest {
             assertEquals(RESULT, service.decryptWithValidity(service.encryptToString(RESULT, VALIDITY)));
             assertEquals(RESULT, service.decrypt(service.encryptToString(RESULT)));
             final String v = service.encryptToString(RESULT);
-            assertThrows(BadRequestException.class, () -> service.decryptWithValidity(v));
+            assertThrows(ValidityNotFoundException.class, () -> service.decryptWithValidity(v));
             final String v2 = service.encryptToString(RESULT, -VALIDITY);
-            assertThrows(ExpiredException.class, () -> service.decryptWithValidity(v2));
+            assertThrows(ValidityExpiredException.class, () -> service.decryptWithValidity(v2));
             assertEquals(RESULT, service.decrypt(service.encryptToByte(RESULT)));
             assertEquals(RESULT, service.decryptWithValidity(service.encryptToString(RESULT, VALIDITY).getBytes()));
         });

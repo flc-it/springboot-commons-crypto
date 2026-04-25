@@ -1,26 +1,10 @@
-target/
-
-### STS ###
-.apt_generated
+### Build ###
+target
+### Release ###
+pom.xml.*
+release.properties
+### Eclipse ###
 .classpath
-.factorypath
 .project
 .settings
-.springBeans
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
-
-### Log files ###
-*.log*

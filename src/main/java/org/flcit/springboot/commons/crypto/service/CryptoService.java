@@ -23,13 +23,12 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import org.flcit.springboot.commons.core.exception.BadRequestException;
-import org.flcit.springboot.commons.core.exception.ExpiredException;
 import org.flcit.commons.core.util.StringUtils;
 import org.flcit.springboot.commons.crypto.configuration.CryptoConfiguration;
+import org.flcit.springboot.commons.crypto.exception.ValidityExpiredException;
+import org.flcit.springboot.commons.crypto.exception.ValidityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -67,7 +66,7 @@ public class CryptoService {
      * @return
      */
     public String encryptToString(String toEncrypt, long dureeValidityInMilliseconds) {
-        return encryptToString((System.currentTimeMillis() + dureeValidityInMilliseconds) + ";" + toEncrypt);
+        return encryptToString((System.currentTimeMillis() + dureeValidityInMilliseconds) + StringUtils.SEMICOLON + toEncrypt);
     }
 
     private byte[] encrypt(String toEncrypt) {
@@ -126,12 +125,12 @@ public class CryptoService {
     }
 
     private static final String checkValidity(String decrypted) {
-        final int index = decrypted.indexOf(';');
+        final int index = decrypted.indexOf(StringUtils.SEMICOLON);
         if (index == -1) {
-            throw new BadRequestException("UNABLE TO FIND VALIDITY");
+            throw new ValidityNotFoundException();
         }
         if (System.currentTimeMillis() > Long.parseLong(decrypted.substring(0, index))) {
-            throw new ExpiredException();
+            throw new ValidityExpiredException();
         }
         return decrypted.substring(index + 1);
     }

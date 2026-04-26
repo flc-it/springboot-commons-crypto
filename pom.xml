@@ -4,7 +4,7 @@
 
     <groupId>org.flcit.springboot.commons</groupId>
     <artifactId>springboot-commons-crypto</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -33,7 +33,7 @@
         <connection>scm:git:git@github.com:flc-it/springboot-commons-crypto.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/flc-it/springboot-commons-crypto.git</developerConnection>
         <url>https://github.com/flc-it/springboot-commons-crypto</url>
-        <tag>springboot-commons-crypto-1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <!-- Paramètres gestionnaire de ticket -->
